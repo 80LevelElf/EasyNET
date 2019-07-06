@@ -1,6 +1,6 @@
 ﻿using EN.Business.Context;
 using EN.Core.Declarations.Services;
-using EN.Entities.Entity;
+using EN.Core.Entity;
 
 namespace EN.Business.Services
 {
@@ -8,7 +8,6 @@ namespace EN.Business.Services
     {
         public ItemService(EnContext dbContext) : base(dbContext)
         {
-
         }
     }
 }

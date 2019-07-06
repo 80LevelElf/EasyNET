@@ -1,6 +1,6 @@
 ﻿using EN.Core.Declarations;
 
-namespace EN.Entities.Entity
+namespace EN.Core.Entity
 {
     public class Item : IEntity
     {

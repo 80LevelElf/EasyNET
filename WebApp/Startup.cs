@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EN.Business.Context;
+﻿using EN.Business.Context;
 using EN.Business.Services;
 using EN.Core.Declarations.Services;
 using Microsoft.AspNetCore.Builder;
@@ -11,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 namespace WebApp
 {
@@ -31,7 +25,9 @@ namespace WebApp
             services.AddDbContext<EnContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
@@ -52,10 +48,15 @@ namespace WebApp
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/WebApp/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
             });
             app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
+            app.UseCors(builder =>
+                 builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             app.UseMvc();
         }
     }

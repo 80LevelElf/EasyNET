@@ -1,11 +1,8 @@
-﻿using EN.Business.Context;
-using EN.Core.Declarations.Services;
-using EN.Entities.Entity;
+﻿using EN.Core.Declarations.Services;
+using EN.Core.Entity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {

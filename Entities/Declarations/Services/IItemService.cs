@@ -1,5 +1,5 @@
 ﻿using EN.Core.Declarations.Context;
-using EN.Entities.Entity;
+using EN.Core.Entity;
 
 namespace EN.Core.Declarations.Services
 {
