@@ -1,15 +1,21 @@
 ﻿using EN.Core.Declarations.Services;
+using EN.Core.DTO;
 using EN.Core.Entity;
 
 namespace XUnitTests
 {
     public class MockUserService : IUserService
     {
-        public User Login(User user)
+        public User Create(UserDto userDto)
         {
-            if (user.Email == "user@user.com")
+            throw new System.NotImplementedException();
+        }
+
+        public User Login(UserDto userDto)
+        {
+            if (userDto.Email == "user@user.com")
             {
-                return new User { Email = "user@user.com" };
+                return new User { userDto = "user@user.com" };
             }
             return null;
         }

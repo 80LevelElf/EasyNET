@@ -1,5 +1,5 @@
 using EN.Core.Declarations.Services;
-using EN.Core.Entity;
+using EN.Core.DTO;
 using Xunit;
 
 namespace XUnitTests
@@ -10,7 +10,7 @@ namespace XUnitTests
         public void LoginTest()
         {
             IUserService userService = new MockUserService();
-            Assert.NotNull(userService.Login(new User { Email = "user@user.com" }));
+            Assert.NotNull(userService.Login(new UserDto { Email = "user@user.com", Password = "test" }));
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using EN.Core.Declarations.Services;
+using EN.Core.DTO;
 using EN.Core.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,14 +16,16 @@ namespace WebApp.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        IUserService _userService;
-        public UserController(IUserService userService)
+        readonly IUserService _userService;
+        readonly IConfiguration _configuration;
+        public UserController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
+            _configuration = configuration;
         }
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Authenticate([FromBody]User user)
+        public IActionResult Authenticate([FromBody]UserDto user)
         {
             var userData = _userService.Login(user);
             if (user == null || userData == null)
@@ -34,7 +38,7 @@ namespace WebApp.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.Name, userData.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -43,36 +47,15 @@ namespace WebApp.Controllers
             var tokenString = tokenHandler.WriteToken(token);
             return Ok(new { token = tokenString });
         }
-
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        [HttpPost]
+        public IActionResult Create([FromBody]UserDto user)
         {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            var userData = _userService.Create(user);
+            if (userData == null)
             {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BadRequest();
             }
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != storedHash[i]) return false;
-                }
-            }
-
-            return true;
+            return Ok(userData);
         }
     }
 }
