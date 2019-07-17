@@ -3,11 +3,15 @@ using EN.Business.Services;
 using EN.Core.Declarations.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
+using WebApp.Helpers;
+
 namespace WebApp
 {
     public class Startup
@@ -24,8 +28,11 @@ namespace WebApp
         {
             services.AddDbContext<EnContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddLocalization(options => options.ResourcesPath = "/Resources");
+            services.AddTransient<ISharedResource, SharedResource>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IContentsService, ContentsService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddCors();
             services.AddSwaggerGen(c =>
@@ -57,6 +64,20 @@ namespace WebApp
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en"),
+                new CultureInfo("es"),
+                new CultureInfo("fr"),
+            };
+            app.UseStaticFiles();
+            app.UseRequestLocalization(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("en");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+
             app.UseMvc();
         }
     }

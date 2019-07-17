@@ -15,10 +15,11 @@ namespace EN.Business.Context
             _dbContext = dbContext;
         }
 
-        public async Task CreateAsync(TEntity entity)
+        public async Task<TEntity> CreateAsync(TEntity entity)
         {
             await _dbContext.Set<TEntity>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
+            return entity;
         }
 
         public async Task Delete(int id)

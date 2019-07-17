@@ -1,6 +1,5 @@
 ﻿using EN.Core.Declarations.Services;
 using EN.Core.DTO;
-using EN.Core.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +8,8 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.Localization;
+using WebApp.Helpers;
 
 namespace WebApp.Controllers
 {
@@ -18,10 +19,12 @@ namespace WebApp.Controllers
     {
         readonly IUserService _userService;
         readonly IConfiguration _configuration;
-        public UserController(IUserService userService, IConfiguration configuration)
+        private readonly ISharedResource _sharedResource;
+        public UserController(IUserService userService, IConfiguration configuration, ISharedResource sharedResource)
         {
             _userService = userService;
             _configuration = configuration;
+            _sharedResource = sharedResource;
         }
         [AllowAnonymous]
         [HttpPost]
@@ -30,10 +33,12 @@ namespace WebApp.Controllers
             var userData = _userService.Login(user);
             if (user == null || userData == null)
             {
-                return BadRequest(new { message = "Username or password incorrect" });
+
+                return BadRequest(new { message = _sharedResource.Incorrect_Login });
             }
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("EasyNET_is_the_best");
+            var key = Encoding.ASCII.GetBytes(Environment.MachineName);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

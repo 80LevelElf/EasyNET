@@ -9,7 +9,7 @@ namespace EN.Core.Declarations.Context
 
         Task<TEntity> GetByIdAsync(int id);
 
-        Task CreateAsync(TEntity entity);
+        Task<TEntity> CreateAsync(TEntity entity);
 
         Task Update(int id, TEntity entity);
 

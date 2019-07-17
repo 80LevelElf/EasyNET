@@ -15,7 +15,7 @@ namespace XUnitTests
         {
             if (userDto.Email == "user@user.com")
             {
-                return new User { userDto = "user@user.com" };
+                return new User { Email = "user@user.com" };
             }
             return null;
         }

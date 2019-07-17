@@ -1,10 +1,7 @@
-﻿using EN.Core.Declarations;
-
-namespace EN.Core.Entity
+﻿namespace EN.Core.Entity
 {
-    public class Item : IEntity
+    public class Item : EntityBase
     {
-        public int Id { get; set; }
         public string Description { get; set; }
     }
 }

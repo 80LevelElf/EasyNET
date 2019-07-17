@@ -11,12 +11,14 @@ namespace EN.Business.Context
         }
         public DbSet<Item> Items { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Content> Contents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<User>().HasKey(x => x.Id);
             builder.Entity<Item>().HasKey(x => x.Id);
+            builder.Entity<Content>().HasKey(x => x.Id);
 
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
